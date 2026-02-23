@@ -1,9 +1,12 @@
 import express from "express";
+import cors from "cors";
 import profileRoutes from "./routes/profile.routes.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+
+app.use(cors());
 app.use(express.json());
 
 // All profile routes live under /profile
