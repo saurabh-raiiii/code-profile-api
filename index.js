@@ -1,12 +1,17 @@
 import express from "express";
-import cors from "cors";
 import profileRoutes from "./routes/profile.routes.js";
+import cors from "cors";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.use(cors({
+  origin: "*",
+  methods: ["GET"],
+  allowedHeaders: ["Content-Type"],
+}));
+app.options("*", cors());
 
-app.use(cors());
 app.use(express.json());
 
 // All profile routes live under /profile
@@ -16,6 +21,15 @@ app.use("/", profileRoutes);
 app.get("/health", (_, res) =>
   res.json({ status: "ok", timestamp: new Date().toISOString() })
 );
+
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error("Error:", err.message);
+  res.status(500).json({
+    success: false,
+    error: err.message || "Internal server error",
+  });
+});
 
 // 404 fallback
 app.use((req, res) =>
